@@ -1,4 +1,4 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, SearchIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,
@@ -7,6 +7,8 @@ import {
   Button,
   IconButton,
   Avatar,
+  MenuButton,
+  Menu,
 } from "@chakra-ui/react";
 import { faSeedling } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,23 +19,39 @@ const NavBar = () => {
     <Box as="nav" bg="tomato" className="fixed w-full" px={4}>
       <Flex minH="40px" justifyContent="space-between">
         <Center color="white" fontWeight="bold">
-          <FontAwesomeIcon icon={faSeedling} />
+          <text>NotTodoist</text>
         </Center>
         <HStack>
-          <Center justifyContent="space-between" minW={"250px"}>
-            <IconButton
-              variant="outline"
-              colorScheme="whiteAlpha"
-              aria-label="Send email"
-              icon={<AddIcon />}
-              size="sm"
-            />
-            <Avatar
-              name="Dan Abrahmov"
-              src="https://bit.ly/dan-abramov"
-              size="sm"
-              className="ring-1 ring-white"
-            />
+          <Center justifyContent="space-between" gap={2}>
+            <Menu>
+              {/* <MenuButton
+                as={IconButton}
+                aria-label="Options"
+                icon={<HamburgerIcon />}
+                variant="ghost"
+              /> */}
+
+              <IconButton
+                variant="ghost"
+                colorScheme="whiteAlpha"
+                aria-label="new task"
+                icon={<SearchIcon />}
+                size="sm"
+              />
+              <IconButton
+                variant="ghost"
+                colorScheme="whiteAlpha"
+                aria-label="new task"
+                icon={<AddIcon />}
+                size="sm"
+              />
+              <Avatar
+                name="Dan Abrahmov"
+                src="https://bit.ly/dan-abramov"
+                size="sm"
+                className="ring-1 ring-white"
+              />
+            </Menu>
           </Center>
         </HStack>
       </Flex>

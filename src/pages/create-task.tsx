@@ -6,6 +6,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import NavBar from "./NavBar";
 // import SideBar from "./SideBar";
 import Table from "./Table";
+import { useForm } from "react-hook-form";
 
 import { api } from "~/utils/api";
 
