@@ -2,7 +2,6 @@ import {
   AddIcon,
   SearchIcon,
   HamburgerIcon,
-  Icon,
   CloseIcon,
 } from "@chakra-ui/icons";
 import {
@@ -10,22 +9,21 @@ import {
   Flex,
   Center,
   HStack,
-  Button,
   IconButton,
   Avatar,
   MenuButton,
   Menu,
   Text,
   useDisclosure,
+  Link,
+  Stack,
 } from "@chakra-ui/react";
-import { faSeedling } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import React, { ReactNode, useState } from "react";
 
-const NavBar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const toggle = () => setIsOpen(!isOpen);
+const Links = ["Create Task", "Search Tasks", "Account"];
 
+const NavBar = () => {
   return <NavContainer />;
 };
 
@@ -36,6 +34,7 @@ const NavAvatar = () => {
       src="https://bit.ly/dan-abramov"
       size="sm"
       className="ring-1 ring-white"
+      display={{ base: "none", md: "flex" }}
     />
   );
 };
@@ -48,6 +47,7 @@ const NavSearch = () => {
       aria-label="new task"
       icon={<SearchIcon />}
       size="sm"
+      display={{ base: "none", md: "flex" }}
       _hover={{
         background: "white",
         color: "tomato",
@@ -64,6 +64,7 @@ const NavNewTask = () => {
       aria-label="new task"
       icon={<AddIcon />}
       size="sm"
+      display={{ base: "none", md: "flex" }}
       _hover={{
         background: "white",
         color: "tomato",
@@ -76,8 +77,25 @@ const Logo = () => {
   return <Text>NotTodoist</Text>;
 };
 
-const MenuItems = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+const NavLink = ({ children }: { children: ReactNode }) => {
+  return (
+    <Link
+      variant="ghost"
+      colorScheme="whiteAlpha"
+      aria-label="new task"
+      color={"white"}
+      size="sm"
+      _hover={{
+        background: "white",
+        color: "tomato",
+      }}
+    >
+      {children}
+    </Link>
+  );
+};
+
+const MenuItems = ({ isOpen, onOpen, onClose }) => {
   return (
     <Menu>
       <MenuButton
@@ -95,14 +113,18 @@ const MenuItems = () => {
         display={{ md: "none" }}
         onClick={isOpen ? onClose : onOpen}
       />
-      <NavNewTask />
-      <NavSearch />
-      <NavAvatar />
+      <HStack display={{ base: "none" }} w={"auto"}>
+        {Links.map((link) => (
+          <NavLink key={link}>{link}</NavLink>
+        ))}
+      </HStack>
     </Menu>
   );
 };
 
-const NavContainer = ({ ...props }) => {
+const NavContainer = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Box
       as="nav"
@@ -115,9 +137,21 @@ const NavContainer = ({ ...props }) => {
           <Logo />
         </Center>
         <HStack spacing={"24px"}>
-          <MenuItems />
+          <MenuItems isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+          <NavNewTask />
+          <NavSearch />
+          <NavAvatar />
         </HStack>
       </Flex>
+      {isOpen ? (
+        <Box pb={4} display={{ md: "none" }} w={"auto"}>
+          <Stack as={"nav"} spacing={4}>
+            {Links.map((link) => (
+              <NavLink key={link}>{link}</NavLink>
+            ))}
+          </Stack>
+        </Box>
+      ) : null}
     </Box>
   );
 };
