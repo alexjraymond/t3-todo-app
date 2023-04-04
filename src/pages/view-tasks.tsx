@@ -9,16 +9,28 @@ import {
   ListIcon,
   ListItem,
   VStack,
+  Text,
+  Checkbox,
+  Box,
+  useColorModeValue,
+  Container,
+  HStack,
+  Flex,
+  Spacer,
 } from "@chakra-ui/react";
 
 import { MdSettings, MdCheckCircle } from "react-icons/md";
+import { FaSeedling } from "react-icons/fa";
+import { ImCheckboxUnchecked } from "react-icons/im";
+import { FcCalendar } from "react-icons/fc";
 
 import NavBar from "./NavBar";
 // import SideBar from "./SideBar";
 
 import theme from "./theme";
+import { CalendarIcon, DeleteIcon, Icon } from "@chakra-ui/icons";
 
-const Home: NextPage = () => {
+const viewTasks: NextPage = () => {
   return (
     <>
       <Head>
@@ -29,36 +41,124 @@ const Home: NextPage = () => {
       <ChakraProvider theme={theme}>
         <NavBar />
         <main className="flex min-h-screen flex-col items-center justify-center gap-8 ">
-          <VStack
-            border="1px solid"
-            borderColor="gray.400"
-            rounded="md"
-            overflow="hidden"
-            spacing={0}
-          >
-            <List spacing={3}>
-              <ListItem>
-                <ListIcon as={MdCheckCircle} color="tomato" />
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit
-              </ListItem>
-              <ListItem>
-                <ListIcon as={MdCheckCircle} color="tomato" />
-                Assumenda, quia temporibus eveniet a libero incidunt suscipit
-              </ListItem>
-              <ListItem>
-                <ListIcon as={MdCheckCircle} color="tomato" />
-                Quidem, ipsam illum quis sed voluptatum quae eum fugit earum
-              </ListItem>
-              <ListItem>
-                <ListIcon as={MdSettings} color="tomato" />
-                Quidem, ipsam illum quis sed voluptatum quae eum fugit earum
-              </ListItem>
+          <Container maxW="container.lg" p={4}>
+            <List spacing={0}>
+              <IndividualTask tasks={tasks} />
             </List>
-          </VStack>
+          </Container>
         </main>
       </ChakraProvider>
     </>
   );
 };
 
-export default Home;
+export default viewTasks;
+
+interface taskType {
+  id: number;
+  task: string;
+  note: string;
+  type: string;
+}
+
+const tasks: taskType[] = [
+  {
+    id: 1,
+    task: "hi this is the first task",
+    note: "here is some notes about the task",
+    type: "work",
+  },
+  {
+    id: 2,
+    task: "hi this is the second task",
+    note: "here is some notes about the task",
+    type: "personal",
+  },
+  {
+    id: 3,
+    task: "hi this is the third task",
+    note: "here is some notes about the task",
+    type: "home",
+  },
+  {
+    id: 4,
+    task: "hi this is the fourth task",
+    note: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloribus soluta vel neque et nostrum, officiis commodi in repudiandae omnis ratione, aut sunt ea. Inventore veritatis animi facilis? Maxime nulla laboriosam velit error laborum dolorem, necessitatibus neque, tenetur minus nobis obcaecati?",
+    type: "goals",
+  },
+];
+
+interface Props {
+  tasks: taskType[];
+}
+
+const IndividualTask: React.FC<Props> = ({ tasks }) => {
+  const bg = useColorModeValue("white", "gray.700");
+  const borderColor = useColorModeValue("gray.300", "gray.600");
+  const hoverBg = useColorModeValue("gray.50", "gray.600");
+  const noteColor = useColorModeValue("gray.500", "gray.400");
+
+  return (
+    <VStack align="start" spacing={0} width="100%">
+      {tasks.map((task, index) => (
+        <Box
+          key={task.id}
+          p={4}
+          bg={bg}
+          borderTopWidth={index === 0 ? 1 : 0} // Add a top border only to the first task
+          borderBottomWidth={1} // Add a bottom border to all tasks
+          borderColor={borderColor}
+          width="100%"
+          _hover={{ bg: hoverBg }}
+          position="relative"
+        >
+          <Checkbox colorScheme="blue" mb={2} isTruncated>
+            {task.task}
+          </Checkbox>
+          <Text color={noteColor} fontSize="sm" maxW={"calc(100% - 100px)"}>
+            {truncateText(task.note, 120)}
+          </Text>
+          <DeleteIcon
+            position="absolute"
+            top={4}
+            right={4}
+            color={noteColor}
+            boxSize={4}
+            cursor="pointer"
+            _hover={{ color: "red.500" }}
+          />
+          <HStack position="absolute" bottom={4} right={4} spacing={2}>
+            <Spacer />
+            <HStack>
+              <CalendarIcon as={FcCalendar} />
+              <Text fontSize="xs">apr. 2</Text>
+            </HStack>
+            <Box
+              bg={
+                task.type === "work"
+                  ? "blue.300"
+                  : task.type === "personal"
+                  ? "red.300"
+                  : "green.300"
+              } // Customize the background color based on the task type
+              borderRadius="md"
+              px={2}
+              py={1}
+              fontSize="xs"
+              color="white"
+            >
+              {task.type}
+            </Box>
+          </HStack>
+        </Box>
+      ))}
+    </VStack>
+  );
+};
+
+const truncateText = (text: string, maxLength: number): string => {
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return text.slice(0, maxLength) + "...";
+};

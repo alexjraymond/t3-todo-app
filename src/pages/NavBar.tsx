@@ -140,9 +140,10 @@ const MenuItems = ({ isOpen, onOpen, onClose }) => {
         display={{ md: "none" }}
         onClick={isOpen ? onClose : onOpen}
       />
-      <MenuList>
+      <MenuList zIndex={1000}>
         {Links.map((link) => (
           <MenuItem
+            zIndex={1000}
             key={link}
             _hover={{
               background: "white",
@@ -167,6 +168,7 @@ const NavContainer = () => {
         bg="tomato"
         className="fixed left-0 top-0 m-0 w-full shadow-md"
         px={4}
+        zIndex={100}
       >
         <Flex minH="40px" justifyContent="space-between">
           <Center color="white" fontWeight="bold">
