@@ -13,15 +13,21 @@ import {
   Avatar,
   MenuButton,
   Menu,
+  MenuList,
+  MenuItem,
+  MenuDivider,
   Text,
   useDisclosure,
   Link,
   Stack,
+  Button,
+  useColorMode,
 } from "@chakra-ui/react";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
 import React, { ReactNode, useState } from "react";
 
-const Links = ["Create Task", "Search Tasks", "Account"];
+const Links = ["Create Task", "Search Tasks", "Dark/Light Mode", "Account"];
 
 const NavBar = () => {
   return <NavContainer />;
@@ -39,12 +45,33 @@ const NavAvatar = () => {
   );
 };
 
+const NavColorModeButton = () => {
+  const { colorMode, toggleColorMode } = useColorMode();
+
+  return (
+    <Button
+      onClick={toggleColorMode}
+      variant="ghost"
+      colorScheme="whiteAlpha"
+      aria-label="Toggle Color Mode"
+      size="sm"
+      display={{ base: "none", md: "flex" }}
+      _hover={{
+        background: "white",
+        color: "tomato",
+      }}
+    >
+      {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+    </Button>
+  );
+};
+
 const NavSearch = () => {
   return (
     <IconButton
       variant="ghost"
       colorScheme="whiteAlpha"
-      aria-label="new task"
+      aria-label="search tasks"
       icon={<SearchIcon />}
       size="sm"
       display={{ base: "none", md: "flex" }}
@@ -97,7 +124,7 @@ const NavLink = ({ children }: { children: ReactNode }) => {
 
 const MenuItems = ({ isOpen, onOpen, onClose }) => {
   return (
-    <Menu>
+    <Menu autoSelect={false}>
       <MenuButton
         as={IconButton}
         icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
@@ -113,11 +140,19 @@ const MenuItems = ({ isOpen, onOpen, onClose }) => {
         display={{ md: "none" }}
         onClick={isOpen ? onClose : onOpen}
       />
-      <HStack display={{ base: "none" }} w={"auto"}>
+      <MenuList>
         {Links.map((link) => (
-          <NavLink key={link}>{link}</NavLink>
+          <MenuItem
+            key={link}
+            _hover={{
+              background: "white",
+              color: "tomato",
+            }}
+          >
+            {link}
+          </MenuItem>
         ))}
-      </HStack>
+      </MenuList>
     </Menu>
   );
 };
@@ -126,33 +161,27 @@ const NavContainer = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box
-      as="nav"
-      bg="tomato"
-      className="fixed left-0 top-0 m-0 w-full shadow-md"
-      px={4}
-    >
-      <Flex minH="40px" justifyContent="space-between">
-        <Center color="white" fontWeight="bold">
-          <Logo />
-        </Center>
-        <HStack spacing={"24px"}>
-          <MenuItems isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
-          <NavNewTask />
-          <NavSearch />
-          <NavAvatar />
-        </HStack>
-      </Flex>
-      {isOpen ? (
-        <Box pb={4} display={{ md: "none" }} w={"auto"}>
-          <Stack as={"nav"} spacing={4}>
-            {Links.map((link) => (
-              <NavLink key={link}>{link}</NavLink>
-            ))}
-          </Stack>
-        </Box>
-      ) : null}
-    </Box>
+    <>
+      <Box
+        as="nav"
+        bg="tomato"
+        className="fixed left-0 top-0 m-0 w-full shadow-md"
+        px={4}
+      >
+        <Flex minH="40px" justifyContent="space-between">
+          <Center color="white" fontWeight="bold">
+            <Logo />
+          </Center>
+          <HStack spacing={"24px"}>
+            <MenuItems isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+            <NavNewTask />
+            <NavSearch />
+            <NavColorModeButton />
+            <NavAvatar />
+          </HStack>
+        </Flex>
+      </Box>
+    </>
   );
 };
 
