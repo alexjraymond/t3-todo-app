@@ -1,4 +1,3 @@
 -make the parts of the nav bar separate
 -make nav bar responsive, mobile should have hamburger
 -if I want to change the nav bar to not have the full width, it needs to be <MenuItems> instead of NavLinks
--yay
