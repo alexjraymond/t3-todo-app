@@ -15,7 +15,6 @@ import {
   useColorModeValue,
   Container,
   HStack,
-  Flex,
   Spacer,
 } from "@chakra-ui/react";
 
@@ -23,14 +22,13 @@ import { MdSettings, MdCheckCircle } from "react-icons/md";
 import { FaSeedling } from "react-icons/fa";
 import { ImCheckboxUnchecked } from "react-icons/im";
 import { FcCalendar } from "react-icons/fc";
-
 import NavBar from "./NavBar";
-// import SideBar from "./SideBar";
-
+import { api } from "~/utils/api";
 import theme from "./theme";
 import { CalendarIcon, DeleteIcon, Icon } from "@chakra-ui/icons";
 
 const viewTasks: NextPage = () => {
+  const tasks = api.tasks.getTasks.useQuery();
   return (
     <>
       <Head>
@@ -105,8 +103,8 @@ const IndividualTask: React.FC<Props> = ({ tasks }) => {
           key={task.id}
           p={4}
           bg={bg}
-          borderTopWidth={index === 0 ? 1 : 0} // Add a top border only to the first task
-          borderBottomWidth={1} // Add a bottom border to all tasks
+          borderTopWidth={index === 0 ? 1 : 0}
+          borderBottomWidth={1}
           borderColor={borderColor}
           width="100%"
           _hover={{ bg: hoverBg }}

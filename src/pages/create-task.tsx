@@ -8,11 +8,7 @@ import NavBar from "./NavBar";
 import Table from "./Table";
 import { useForm } from "react-hook-form";
 
-import { api } from "~/utils/api";
-
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "gm" });
-
   return (
     <>
       <Head>

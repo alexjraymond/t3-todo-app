@@ -14,4 +14,8 @@ export const tasksRouter = createTRPCRouter({
 
       return task;
     }),
+  getTasks: publicProcedure.query(async ({ ctx }) => {
+    const tasks = await ctx.prisma.task.findMany();
+    return tasks;
+  }),
 });
