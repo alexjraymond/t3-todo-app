@@ -6,6 +6,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import {
   ChakraProvider,
   List,
+  Heading,
   ListIcon,
   ListItem,
   VStack,
@@ -16,19 +17,29 @@ import {
   Container,
   HStack,
   Spacer,
+  Button,
+  Flex,
+  IconButton,
 } from "@chakra-ui/react";
 
 import { MdSettings, MdCheckCircle } from "react-icons/md";
 import { FaSeedling } from "react-icons/fa";
 import { ImCheckboxUnchecked } from "react-icons/im";
-import { FcCalendar } from "react-icons/fc";
+import { FcCalendar, FcGenericSortingDesc } from "react-icons/fc";
+import { RiListSettingsLine } from "react-icons/ri";
 import NavBar from "./NavBar";
 import { api } from "~/utils/api";
 import theme from "./theme";
-import { CalendarIcon, DeleteIcon, Icon } from "@chakra-ui/icons";
+import {
+  ArrowDownIcon,
+  CalendarIcon,
+  DeleteIcon,
+  Icon,
+} from "@chakra-ui/icons";
+
+// const tasks: object = api.tasks.getTasks.useQuery();
 
 const viewTasks: NextPage = () => {
-  const tasks = api.tasks.getTasks.useQuery();
   return (
     <>
       <Head>
@@ -40,6 +51,7 @@ const viewTasks: NextPage = () => {
         <NavBar />
         <main className="flex min-h-screen flex-col items-center justify-center gap-8 ">
           <Container maxW="container.lg" p={4}>
+            <ViewTasksHeader />
             <List spacing={0}>
               <IndividualTask tasks={tasks} />
             </List>
@@ -159,4 +171,29 @@ const truncateText = (text: string, maxLength: number): string => {
     return text;
   }
   return text.slice(0, maxLength) + "...";
+};
+
+// const ViewTasksHeader = () => {
+//   return (
+//     <header>
+//       <Heading as="h1" noOfLines={1}>
+//         Tasks
+//       </Heading>
+//     </header>
+//   );
+// };
+
+const ViewTasksHeader = () => {
+  return (
+    <Flex justifyContent="space-between" alignItems="center" mb={4}>
+      <Heading as="h1" noOfLines={1}>
+        Tasks
+      </Heading>
+      <VStack spacing={2} alignItems="flex-end">
+        <Button colorScheme="blue" size="sm">
+          <Icon as={RiListSettingsLine}></Icon>
+        </Button>
+      </VStack>
+    </Flex>
+  );
 };

@@ -26,11 +26,37 @@ import {
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
 import React, { ReactNode, useState } from "react";
+import CreateTaskModal from "./CreateTaskModal";
 
 const Links = ["Create Task", "Search Tasks", "Dark/Light Mode", "Account"];
 
+interface NavContainerProps {
+  onOpenModal: () => void;
+}
+
 const NavBar = () => {
-  return <NavContainer />;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSaveTask = (task: string) => {
+    // Save the task in your desired way (e.g., add it to the task list, send it to the API)
+    console.log("Task saved:", task);
+  };
+  return (
+    <>
+      <NavContainer onOpenModal={handleOpenModal} />
+      <CreateTaskModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSaveTask}
+      />
+    </>
+  );
 };
 
 const NavAvatar = () => {
@@ -83,7 +109,11 @@ const NavSearch = () => {
   );
 };
 
-const NavNewTask = () => {
+interface NavNewTaskProps {
+  onOpenModal: () => void;
+}
+
+const NavNewTask: React.FC<NavNewTaskProps> = ({ onOpenModal }) => {
   return (
     <IconButton
       variant="ghost"
@@ -92,6 +122,7 @@ const NavNewTask = () => {
       icon={<AddIcon />}
       size="sm"
       display={{ base: "none", md: "flex" }}
+      onClick={onOpenModal}
       _hover={{
         background: "white",
         color: "tomato",
@@ -158,7 +189,7 @@ const MenuItems = ({ isOpen, onOpen, onClose }) => {
   );
 };
 
-const NavContainer = () => {
+const NavContainer: React.FC<NavContainerProps> = ({ onOpenModal }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -176,7 +207,7 @@ const NavContainer = () => {
           </Center>
           <HStack spacing={"24px"}>
             <MenuItems isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
-            <NavNewTask />
+            <NavNewTask onOpenModal={onOpenModal} />
             <NavSearch />
             <NavColorModeButton />
             <NavAvatar />
