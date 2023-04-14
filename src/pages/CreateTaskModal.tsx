@@ -15,7 +15,8 @@ import {
   FormControl,
   FormLabel,
 } from "@chakra-ui/react";
-import { DatePicker } from "@orange_digital/chakra-datepicker";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -89,8 +90,10 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
             </FormControl>
             <FormControl id="task-date">
               <FormLabel>Date</FormLabel>
-
-              <DatePicker initialValue={taskDate} />
+              <ReactDatePicker
+                selected={taskDate}
+                onChange={(date: Date) => setTaskDate(date)}
+              />
             </FormControl>
             <FormControl id="task-type">
               <FormLabel>Type</FormLabel>

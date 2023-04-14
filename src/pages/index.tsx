@@ -21,7 +21,6 @@ const Home: NextPage = () => {
       <ChakraProvider theme={theme}>
         <NavBar />
         <main className="flex min-h-screen flex-col items-center justify-center gap-8 ">
-          <Link href={"/create-task"}>Create a new task</Link>
           <Link href={"/view-tasks"}>View Tasks</Link>
         </main>
       </ChakraProvider>
