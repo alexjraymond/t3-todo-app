@@ -1,4 +1,5 @@
 // import "@fontsource/montserrat/400.css";
+import React, { useState } from "react";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -39,7 +40,8 @@ import {
 
 // const tasks: object = api.tasks.getTasks.useQuery();
 
-const viewTasks: NextPage = () => {
+const ViewTasks: NextPage = () => {
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   return (
     <>
       <Head>
@@ -62,7 +64,7 @@ const viewTasks: NextPage = () => {
   );
 };
 
-export default viewTasks;
+export default ViewTasks;
 
 interface taskType {
   id: number;
@@ -121,6 +123,8 @@ const IndividualTask: React.FC<Props> = ({ tasks }) => {
           width="100%"
           _hover={{ bg: hoverBg }}
           position="relative"
+          cursor="pointer"
+          // onClick={expandedTask}
         >
           <Checkbox colorScheme="blue" mb={2} isTruncated>
             {task.task}

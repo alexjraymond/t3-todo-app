@@ -4,7 +4,14 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const tasksRouter = createTRPCRouter({
   createTask: publicProcedure
-    .input(z.object({ task: z.string() }))
+    .input(
+      z.object({
+        task: z.string(),
+        description: z.string(),
+        date: z.string(),
+        type: z.string(),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
       const task = await ctx.prisma.task.create({
         data: {

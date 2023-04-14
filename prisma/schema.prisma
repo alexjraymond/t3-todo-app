@@ -68,4 +68,7 @@ model VerificationToken {
 model Task {
     id         String   @id @default(cuid())
     task       String
+    description String
+    date        String
+    type        String
 }

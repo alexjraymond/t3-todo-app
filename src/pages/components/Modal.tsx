@@ -17,8 +17,6 @@ import {
 } from "@chakra-ui/react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { api } from "~/utils/api";
-import { useRouter } from "next/router";
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -31,39 +29,16 @@ interface TaskModalProps {
   }) => void;
 }
 
-const CreateTaskModal: React.FC<TaskModalProps> = ({
-  isOpen,
-  onClose,
-  onSave,
-}) => {
+const Modal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSave }) => {
   const initialRef = useRef(null);
   const finalRef = useRef(null);
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [taskType, setTaskType] = useState("");
   const [taskDate, setTaskDate] = useState(new Date());
-  const [isLoading, setIsLoading] = useState(false);
-
-  const createTaskMutation = api.tasks.createTask.useMutation();
-
-  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const stringTaskDate = taskDate.toISOString();
-    createTaskMutation
-      .mutateAsync({
-        task: taskName,
-        description: taskDescription,
-        date: stringTaskDate,
-        type: taskType,
-      })
-      .then(() => {
-        void router.push("/");
-      })
-      .catch((error) => {
-        console.error("Error creating task:", error);
-      });
     onSave({
       name: taskName,
       description: taskDescription,
@@ -144,4 +119,4 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
   );
 };
 
-export default CreateTaskModal;
+export default Modal;
