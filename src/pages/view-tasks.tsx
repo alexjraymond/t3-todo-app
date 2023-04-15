@@ -1,5 +1,5 @@
 // import "@fontsource/montserrat/400.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -38,10 +38,30 @@ import {
   Icon,
 } from "@chakra-ui/icons";
 
-// const tasks: object = api.tasks.getTasks.useQuery();
+interface Task {
+  id: number;
+  task: string;
+  description: string;
+  type: string;
+  date: string;
+}
+
+interface Props {
+  tasks: Task[];
+}
 
 const ViewTasks: NextPage = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+  const { data: tasksData } = api.tasks.getTasks.useQuery();
+  console.log(tasksData);
+
+  useEffect(() => {
+    if (tasksData) {
+      setTasks(tasksData);
+    }
+  }, [tasksData]);
+
   return (
     <>
       <Head>
@@ -55,7 +75,7 @@ const ViewTasks: NextPage = () => {
           <Container maxW="container.lg" p={4}>
             <ViewTasksHeader />
             <List spacing={0}>
-              <IndividualTask tasks={tasks} />
+              <IndividualTask {...{ tasks }} />
             </List>
           </Container>
         </main>
@@ -66,45 +86,8 @@ const ViewTasks: NextPage = () => {
 
 export default ViewTasks;
 
-interface taskType {
-  id: number;
-  task: string;
-  note: string;
-  type: string;
-}
-
-const tasks: taskType[] = [
-  {
-    id: 1,
-    task: "hi this is the first task",
-    note: "here is some notes about the task",
-    type: "work",
-  },
-  {
-    id: 2,
-    task: "hi this is the second task",
-    note: "here is some notes about the task",
-    type: "personal",
-  },
-  {
-    id: 3,
-    task: "hi this is the third task",
-    note: "here is some notes about the task",
-    type: "home",
-  },
-  {
-    id: 4,
-    task: "hi this is the fourth task",
-    note: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloribus soluta vel neque et nostrum, officiis commodi in repudiandae omnis ratione, aut sunt ea. Inventore veritatis animi facilis? Maxime nulla laboriosam velit error laborum dolorem, necessitatibus neque, tenetur minus nobis obcaecati?",
-    type: "goals",
-  },
-];
-
-interface Props {
-  tasks: taskType[];
-}
-
 const IndividualTask: React.FC<Props> = ({ tasks }) => {
+  console.log(tasks);
   const bg = useColorModeValue("white", "gray.700");
   const borderColor = useColorModeValue("gray.300", "gray.600");
   const hoverBg = useColorModeValue("gray.50", "gray.600");
@@ -130,7 +113,7 @@ const IndividualTask: React.FC<Props> = ({ tasks }) => {
             {task.task}
           </Checkbox>
           <Text color={noteColor} fontSize="sm" maxW={"calc(100% - 100px)"}>
-            {truncateText(task.note, 120)}
+            {truncateText(task.description, 120)}
           </Text>
           <DeleteIcon
             position="absolute"
@@ -176,16 +159,6 @@ const truncateText = (text: string, maxLength: number): string => {
   }
   return text.slice(0, maxLength) + "...";
 };
-
-// const ViewTasksHeader = () => {
-//   return (
-//     <header>
-//       <Heading as="h1" noOfLines={1}>
-//         Tasks
-//       </Heading>
-//     </header>
-//   );
-// };
 
 const ViewTasksHeader = () => {
   return (
