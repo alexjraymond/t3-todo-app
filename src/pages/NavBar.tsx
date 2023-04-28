@@ -44,7 +44,6 @@ const NavBar = () => {
   };
 
   const handleSaveTask = (task: string) => {
-    // Save the task in your desired way (e.g., add it to the task list, send it to the API)
     console.log("Task saved:", task);
   };
   return (
@@ -84,7 +83,7 @@ const NavColorModeButton = () => {
       display={{ base: "none", md: "flex" }}
       _hover={{
         background: "white",
-        color: "tomato",
+        color: "pink.500",
       }}
     >
       {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -196,7 +195,8 @@ const NavContainer: React.FC<NavContainerProps> = ({ onOpenModal }) => {
     <>
       <Box
         as="nav"
-        bg="tomato"
+        bg="stone.500"
+        color="stone.200"
         className="fixed left-0 top-0 m-0 w-full shadow-md"
         px={4}
         zIndex={100}

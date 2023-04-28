@@ -2,14 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
 import {
   ChakraProvider,
   List,
   Heading,
-  ListIcon,
-  ListItem,
   VStack,
   Text,
   Checkbox,
@@ -20,26 +16,20 @@ import {
   Spacer,
   Button,
   Flex,
-  IconButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 
-import { MdSettings, MdCheckCircle } from "react-icons/md";
-import { FaSeedling } from "react-icons/fa";
-import { ImCheckboxUnchecked } from "react-icons/im";
-import { FcCalendar, FcGenericSortingDesc } from "react-icons/fc";
+import { FcCalendar } from "react-icons/fc";
 import { RiListSettingsLine } from "react-icons/ri";
 import NavBar from "./NavBar";
 import { api } from "~/utils/api";
 import theme from "./theme";
-import {
-  ArrowDownIcon,
-  CalendarIcon,
-  DeleteIcon,
-  Icon,
-} from "@chakra-ui/icons";
+import { CalendarIcon, DeleteIcon, Icon } from "@chakra-ui/icons";
+import dateFormat from "dateformat";
+import CreateTaskModal from "./CreateTaskModal";
 
 interface Task {
-  id: number;
+  id: string;
   task: string;
   description: string;
   type: string;
@@ -52,9 +42,20 @@ interface Props {
 
 const ViewTasks: NextPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   const { data: tasksData } = api.tasks.getTasks.useQuery();
   console.log(tasksData);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSaveTask = (task: string) => {
+    console.log("Task saved:", task);
+  };
 
   useEffect(() => {
     if (tasksData) {
@@ -77,6 +78,7 @@ const ViewTasks: NextPage = () => {
             <List spacing={0}>
               <IndividualTask {...{ tasks }} />
             </List>
+            <NewTaskButton handleSaveTask={handleSaveTask} />
           </Container>
         </main>
       </ChakraProvider>
@@ -87,68 +89,104 @@ const ViewTasks: NextPage = () => {
 export default ViewTasks;
 
 const IndividualTask: React.FC<Props> = ({ tasks }) => {
-  console.log(tasks);
   const bg = useColorModeValue("white", "gray.700");
   const borderColor = useColorModeValue("gray.300", "gray.600");
   const hoverBg = useColorModeValue("gray.50", "gray.600");
   const noteColor = useColorModeValue("gray.500", "gray.400");
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   return (
     <VStack align="start" spacing={0} width="100%">
-      {tasks.map((task, index) => (
-        <Box
-          key={task.id}
-          p={4}
-          bg={bg}
-          borderTopWidth={index === 0 ? 1 : 0}
-          borderBottomWidth={1}
-          borderColor={borderColor}
-          width="100%"
-          _hover={{ bg: hoverBg }}
-          position="relative"
-          cursor="pointer"
-          // onClick={expandedTask}
-        >
-          <Checkbox colorScheme="blue" mb={2} isTruncated>
-            {task.task}
-          </Checkbox>
-          <Text color={noteColor} fontSize="sm" maxW={"calc(100% - 100px)"}>
-            {truncateText(task.description, 120)}
-          </Text>
-          <DeleteIcon
-            position="absolute"
-            top={4}
-            right={4}
-            color={noteColor}
-            boxSize={4}
+      {tasks.map((task, index) => {
+        const date = new Date(task.date);
+        const formattedDate = dateFormat(date, "mmm. d");
+
+        return (
+          <Box
+            key={task.id}
+            p={4}
+            bg={bg}
+            borderTopWidth={index === 0 ? 1 : 0}
+            borderBottomWidth={1}
+            borderColor={borderColor}
+            width="100%"
+            _hover={{ bg: hoverBg }}
+            position="relative"
             cursor="pointer"
-            _hover={{ color: "red.500" }}
-          />
-          <HStack position="absolute" bottom={4} right={4} spacing={2}>
-            <Spacer />
-            <HStack>
-              <CalendarIcon as={FcCalendar} />
-              <Text fontSize="xs">apr. 2</Text>
+            onClick={() => setSelectedTask(task)}
+          >
+            <Checkbox colorScheme="blue" mb={2} isTruncated>
+              {task.task}
+            </Checkbox>
+            <Text color={noteColor} fontSize="sm" maxW={"calc(100% - 100px)"}>
+              {truncateText(task.description, 120)}
+            </Text>
+            <DeleteIcon
+              position="absolute"
+              top={4}
+              right={4}
+              color={noteColor}
+              boxSize={4}
+              cursor="pointer"
+              _hover={{ color: "red.500" }}
+            />
+            <HStack position="absolute" bottom={4} right={4} spacing={2}>
+              <Spacer />
+              <HStack>
+                <CalendarIcon as={FcCalendar} />
+                <Text fontSize="xs">{formattedDate}</Text>
+              </HStack>
+              <Box
+                bg={
+                  task.type === "work"
+                    ? "blue.300"
+                    : task.type === "personal"
+                    ? "red.300"
+                    : "green.300"
+                }
+                borderRadius="md"
+                px={2}
+                py={1}
+                fontSize="xs"
+                color="white"
+              >
+                {task.type}
+              </Box>
             </HStack>
-            <Box
-              bg={
-                task.type === "work"
-                  ? "blue.300"
-                  : task.type === "personal"
-                  ? "red.300"
-                  : "green.300"
-              } // Customize the background color based on the task type
-              borderRadius="md"
-              px={2}
-              py={1}
-              fontSize="xs"
-              color="white"
-            >
-              {task.type}
-            </Box>
-          </HStack>
+          </Box>
+        );
+      })}
+      {selectedTask && (
+        <Box
+          position="fixed"
+          top={0}
+          left={0}
+          width="100vw"
+          height="100vh"
+          bg="rgba(0, 0, 0, 0.5)"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          zIndex={10}
+          onClick={() => setSelectedTask(null)}
+        >
+          <Box
+            bg="white"
+            p={4}
+            borderRadius="md"
+            boxShadow="md"
+            maxWidth="90vw"
+            maxHeight="90vh"
+            overflow="auto"
+          >
+            <Heading as="h2" size="md" mb={4}>
+              {selectedTask.task}
+            </Heading>
+            <Text mb={4}>{selectedTask.description}</Text>
+            {/* ... */}
+          </Box>
         </Box>
-      ))}
+      )}
     </VStack>
   );
 };
@@ -172,5 +210,22 @@ const ViewTasksHeader = () => {
         </Button>
       </VStack>
     </Flex>
+  );
+};
+
+const NewTaskButton = (handleSaveTask) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  return (
+    <div className="grid">
+      <Button className="mt-2 flex justify-end" onClick={onOpen}>
+        Add Task
+      </Button>
+      <CreateTaskModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onSave={handleSaveTask}
+      />
+    </div>
   );
 };

@@ -24,6 +24,7 @@ interface TaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (task: {
+    id: string;
     name: string;
     description: string;
     date: Date;
@@ -42,6 +43,7 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
   const [taskDescription, setTaskDescription] = useState("");
   const [taskType, setTaskType] = useState("");
   const [taskDate, setTaskDate] = useState(new Date());
+
   const [isLoading, setIsLoading] = useState(false);
 
   const createTaskMutation = api.tasks.createTask.useMutation();
@@ -65,6 +67,7 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
         console.error("Error creating task:", error);
       });
     onSave({
+      id: "",
       name: taskName,
       description: taskDescription,
       date: taskDate,
